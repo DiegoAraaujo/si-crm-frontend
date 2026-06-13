@@ -6,12 +6,6 @@ interface RecentLeadsProps {
   leads: RecentLead[];
 }
 
-const statusColors: Record<string, string> = {
-  hot: "bg-hot/10 text-hot",
-  warm: "bg-warm/10 text-warm",
-  cold: "bg-cold/10 text-cold",
-};
-
 const getInitials = (name: string) =>
   name
     .split(" ")
@@ -22,9 +16,9 @@ const getInitials = (name: string) =>
 
 const avatarColors = [
   "bg-primary",
-  "bg-warm",
-  "bg-hot",
-  "bg-cold",
+  "bg-emerald-500",
+  "bg-amber-500",
+  "bg-rose-500",
   "bg-purple-500",
 ];
 
@@ -42,6 +36,9 @@ export const RecentLeads = ({ leads }: RecentLeadsProps) => {
       </div>
 
       <div className="flex flex-col gap-3">
+        {leads.length === 0 && (
+          <p className="text-sm text-text-muted">Nenhum lead recente.</p>
+        )}
         {leads.map((lead, i) => (
           <div key={lead.id} className="flex items-center gap-3">
             <div
@@ -57,17 +54,18 @@ export const RecentLeads = ({ leads }: RecentLeadsProps) => {
                 {lead.name}
               </p>
               <p className="text-xs text-text-muted truncate">
-                {lead.property}
+                {lead.propertyType}
+                {lead.city ? ` • ${lead.city}` : ""}
               </p>
             </div>
             <span
-              className={cn(
-                "text-xs font-semibold px-2 py-0.5 rounded-full uppercase flex-shrink-0",
-                statusColors[lead.status?.toLowerCase()] ??
-                  "bg-gray-100 text-text-muted",
-              )}
+              className="text-xs font-semibold px-2 py-0.5 rounded-full flex-shrink-0"
+              style={{
+                backgroundColor: `${lead.statusColor}20`,
+                color: lead.statusColor,
+              }}
             >
-              {lead.status}
+              {lead.statusName}
             </span>
           </div>
         ))}
