@@ -12,9 +12,9 @@ export const middleware = (request: NextRequest) => {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
-  // if (!isPublic && !token) {
-  //   return NextResponse.redirect(new URL("/login", request.url));
-  // }
+  if (!isPublic && !token) {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
 
   if (isPublic && token) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
