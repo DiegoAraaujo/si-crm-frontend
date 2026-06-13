@@ -27,7 +27,6 @@ export const ChatInput = ({ onSend, disabled }: ChatInputProps) => {
   return (
     <div className="border-t border-border p-4 bg-white">
       <div className="flex items-center gap-3 border border-border rounded-2xl px-4 py-3 bg-bg focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition">
-        <Paperclip className="w-4 h-4 text-text-muted flex-shrink-0 cursor-pointer hover:text-primary transition" />
         <input
           value={value}
           onChange={(e) => setValue(e.target.value)}

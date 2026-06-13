@@ -3,8 +3,12 @@ import api from "@/lib/axios";
 export interface Status {
   id: string;
   name: string;
-  color?: string;
-  order?: number;
+  color: string;
+  order: number;
+  isDefault: boolean;
+  userId: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export const getStatuses = async (): Promise<Status[]> => {
@@ -14,7 +18,8 @@ export const getStatuses = async (): Promise<Status[]> => {
 
 export const createStatus = async (payload: {
   name: string;
-  color?: string;
+  color: string;
+  order: number;
 }): Promise<Status> => {
   const { data } = await api.post("/statuses", payload);
   return data;
@@ -22,7 +27,7 @@ export const createStatus = async (payload: {
 
 export const updateStatus = async (
   id: string,
-  payload: { name?: string; color?: string },
+  payload: { name?: string; color?: string; order?: number },
 ): Promise<Status> => {
   const { data } = await api.patch(`/statuses/${id}`, payload);
   return data;

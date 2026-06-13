@@ -24,3 +24,10 @@ body {
   background-color: var(--bg);
   color: #111;
 }
+
+button {
+  cursor: pointer;
+}
+.overflow-x-auto::-webkit-scrollbar {
+  display: none;
+}

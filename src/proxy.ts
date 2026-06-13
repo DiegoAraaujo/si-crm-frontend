@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 
 const publicRoutes = ["/login", "/register"];
 
-export const middleware = (request: NextRequest) => {
+export const proxy = (request: NextRequest) => {
   const { pathname } = request.nextUrl;
   const isPublic = publicRoutes.some((route) => pathname.startsWith(route));
   const token = request.cookies.get("refresh_token")?.value;
@@ -12,9 +12,9 @@ export const middleware = (request: NextRequest) => {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
-  // if (!isPublic && !token) {
-  //   return NextResponse.redirect(new URL("/login", request.url));
-  // }
+  if (!isPublic && !token) {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
 
   if (isPublic && token) {
     return NextResponse.redirect(new URL("/dashboard", request.url));

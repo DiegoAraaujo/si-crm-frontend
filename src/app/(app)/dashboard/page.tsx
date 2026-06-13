@@ -4,7 +4,7 @@ import { useDashboard } from "@/modules/dashboard/hooks";
 import { StatCard } from "@/modules/dashboard/components/stat-card";
 import { RecentLeads } from "@/modules/dashboard/components/recent-leads";
 import { RecentActivities } from "@/modules/dashboard/components/recent-activities";
-import { FunnelChart } from "@/modules/dashboard/components/funnel-chart";
+import { DistributionChart } from "@/modules/dashboard/components/distribution-chart";
 
 const DashboardPage = () => {
   const { data, isLoading } = useDashboard();
@@ -17,35 +17,6 @@ const DashboardPage = () => {
     );
   }
 
-  const funnelItems = data
-    ? [
-        {
-          label: "Captados",
-          value: data.funnel.new,
-          max: data.funnel.new,
-          color: "#1e3a7b",
-        },
-        {
-          label: `Qualificados (82%)`,
-          value: data.funnel.qualified,
-          max: data.funnel.new,
-          color: "#1e3a7b",
-        },
-        {
-          label: `Negociação (33%)`,
-          value: data.funnel.proposal,
-          max: data.funnel.new,
-          color: "#1e3a7b",
-        },
-        {
-          label: `Fechados (12%)`,
-          value: data.funnel.closed,
-          max: data.funnel.new,
-          color: "#10b981",
-        },
-      ]
-    : [];
-
   return (
     <div className="flex flex-col gap-6">
       <div>
@@ -56,12 +27,7 @@ const DashboardPage = () => {
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard
-          label="Total de Leads"
-          value={data?.stats.totalLeads ?? 0}
-          badge="↗ 12%"
-          badgeVariant="green"
-        />
+        <StatCard label="Total de Leads" value={data?.stats.totalLeads ?? 0} />
         <StatCard
           label="Leads Novos"
           value={data?.stats.newLeads ?? 0}
@@ -69,46 +35,41 @@ const DashboardPage = () => {
           badgeVariant="blue"
         />
         <StatCard
-          label="Em Negociação"
-          value={data?.stats.inNegotiation ?? 0}
+          label="Status Mais Ativo"
+          value={data?.stats.topStatus ?? "—"}
         />
         <StatCard
-          label="Leads Fechados"
-          value={data?.stats.closedLeads ?? 0}
-          badge="+5 vs UP"
-          badgeVariant="red"
+          label="Distribuições"
+          value={data?.boardDistribution.length ?? 0}
+          badge="Status"
+          badgeVariant="gray"
         />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div className="bg-sidebar border border-border rounded-xl p-5 flex flex-col gap-4">
-          <h2 className="font-bold text-text-base">Funil de Conversão</h2>
-          <FunnelChart data={funnelItems} />
-        </div>
+        <DistributionChart
+          title="Leads por Status"
+          data={data?.boardDistribution ?? []}
+          total={data?.stats.totalLeads ?? 0}
+        />
+        <DistributionChart
+          title="Tipo de Interesse"
+          data={data?.typeDistribution ?? []}
+          total={data?.stats.totalLeads ?? 0}
+        />
+      </div>
 
-        <div className="bg-sidebar border border-border rounded-xl p-5 flex flex-col gap-4">
-          <h2 className="font-bold text-text-base">Leads por Quadro</h2>
-          <div className="flex flex-col gap-3">
-            {data?.boardDistribution.map((board) => (
-              <div key={board.name} className="flex flex-col gap-1">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-text-muted">{board.name}</span>
-                  <span className="font-semibold text-text-base">
-                    {board.count}
-                  </span>
-                </div>
-                <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-primary rounded-full"
-                    style={{
-                      width: `${Math.min((board.count / (data.stats.totalLeads || 1)) * 100, 100)}%`,
-                    }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <DistributionChart
+          title="Origem dos Leads"
+          data={data?.originDistribution ?? []}
+          total={data?.stats.totalLeads ?? 0}
+        />
+        <DistributionChart
+          title="Tipos de Imóvel"
+          data={data?.propertyTypeDistribution ?? []}
+          total={data?.stats.totalLeads ?? 0}
+        />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">

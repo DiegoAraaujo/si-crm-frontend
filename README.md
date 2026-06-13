@@ -1,36 +1,103 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SI CRM Frontend
 
-## Getting Started
+Web interface for SI CRM, a real estate client relationship management system built for SI Realty Group.
 
-First, run the development server:
+## Technologies
+
+- Next.js 16 (App Router)
+- TypeScript
+- Tailwind CSS v4
+- TanStack Query v5
+- Axios (with JWT refresh token interceptors)
+- Zustand (global auth state)
+- React Hook Form + Zod (forms and validation)
+- Lucide React (icons)
+- Docker + Docker Compose
+
+## Architecture
+
+Feature-based modular architecture organized per domain:
+
+- `api` — API calls to the backend
+- `hooks` — TanStack Query hooks (queries and mutations)
+- `components` — UI components scoped to the module
+- `schemas` — Zod validation schemas
+
+## Modules
+
+- `auth` — login, register, logout, route protection
+- `dashboard` — stats, conversion funnel, recent leads and activities
+- `leads` — full lead CRUD with search and status filter
+- `kanban` — dynamic columns with drag and drop
+- `statuses` — kanban status CRUD
+- `chat` — AI assistant chat interface
+- `users` — authenticated user profile
+
+## Requirements
+
+- Node.js 20+
+- npm 10+
+- SI CRM Backend running on port 3333
+- SI CRM AI microservice running on port 8000
+
+## Environment Variables
+
+Copy `.env.example` to `.env.local` and fill in the values:
+
+```bash
+cp .env.example .env.local
+```
+
+| Variable | Description | Default |
+|---|---|---|
+| NEXT_PUBLIC_API_URL | Backend API URL | http://localhost:3333 |
+| NEXT_PUBLIC_AI_URL | AI microservice URL | http://localhost:8000 |
+
+## Running Locally
+
+**1. Install dependencies:**
+
+```bash
+npm install
+```
+
+**2. Start the development server:**
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The app will be available at `http://localhost:3000`
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Running with Docker
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+docker build -t si-crm-frontend .
+docker run -p 3000:3000 si-crm-frontend
+```
 
-## Learn More
+## Integration
 
-To learn more about Next.js, take a look at the following resources:
+- **Backend:** expects SI CRM API at `http://localhost:3333` (configurable via `NEXT_PUBLIC_API_URL`)
+- **AI Microservice:** expects FastAPI running at `http://localhost:8000` (configurable via `NEXT_PUBLIC_AI_URL`)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Pages
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Route | Description |
+|---|---|
+| `/login` | Login page |
+| `/register` | Register page |
+| `/dashboard` | Stats and overview |
+| `/kanban` | Kanban board with drag and drop |
+| `/leads` | Leads table with search and filters |
+| `/chat` | AI assistant chat |
+| `/profile` | User profile |
 
-## Deploy on Vercel
+## Scripts
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm run dev      # Development server
+npm run build    # Production build
+npm start        # Start production server
+npm run lint     # Run linter
+```

@@ -3,25 +3,26 @@
 import { useState } from "react";
 import { Search, Plus } from "lucide-react";
 import { useLeads } from "@/modules/leads/hooks";
-import { LeadBadge } from "@/modules/leads/components/lead-badge";
+import { useStatuses } from "@/modules/statuses/hooks";
 import { LeadAvatar } from "@/modules/leads/components/lead-avatar";
 import { LeadActionsMenu } from "@/modules/leads/components/lead-actions-menu";
 import { LeadFormModal } from "@/modules/leads/components/lead-form-modal";
+import { LeadViewModal } from "@/modules/leads/components/lead-view-modal";
 import { cn } from "@/lib/utils";
 import type { Lead } from "@/modules/leads/api";
 
-const statusFilters = ["Todos", "Hot", "Warm", "Cold"];
-
 const LeadsPage = () => {
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("Todos");
+  const [statusFilter, setStatusFilter] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
+  const [viewModalOpen, setViewModalOpen] = useState(false);
   const [selectedLead, setSelectedLead] = useState<Lead | undefined>();
   const [viewLead, setViewLead] = useState<Lead | undefined>();
 
+  const { data: statuses } = useStatuses();
   const { data: leads, isLoading } = useLeads({
     search: search || undefined,
-    statusId: statusFilter !== "Todos" ? statusFilter.toLowerCase() : undefined,
+    statusId: statusFilter || undefined,
   });
 
   const handleEdit = (lead: Lead) => {
@@ -31,12 +32,20 @@ const LeadsPage = () => {
 
   const handleView = (lead: Lead) => {
     setViewLead(lead);
-    setModalOpen(true);
+    setViewModalOpen(true);
   };
 
   const handleNew = () => {
     setSelectedLead(undefined);
     setModalOpen(true);
+  };
+
+  const getStatusName = (statusId: string) => {
+    return statuses?.find((s) => s.id === statusId)?.name ?? "—";
+  };
+
+  const getStatusColor = (statusId: string) => {
+    return statuses?.find((s) => s.id === statusId)?.color ?? "#888";
   };
 
   return (
@@ -64,28 +73,44 @@ const LeadsPage = () => {
             />
           </div>
 
-          <div className="flex items-center gap-1 bg-white border border-border rounded-lg p-1">
+          <div className="flex items-center gap-1 bg-white border border-border rounded-lg p-1 flex-wrap">
             <span className="text-xs text-text-muted font-medium px-2">
               STATUS:
             </span>
-            {statusFilters.map((f) => (
+            <button
+              onClick={() => setStatusFilter("")}
+              className={cn(
+                "px-3 py-1.5 rounded-md text-xs font-semibold transition",
+                statusFilter === ""
+                  ? "bg-primary text-white"
+                  : "text-text-muted hover:bg-gray-100",
+              )}
+            >
+              Todos
+            </button>
+            {statuses?.map((status) => (
               <button
-                key={f}
-                onClick={() => setStatusFilter(f)}
+                key={status.id}
+                onClick={() => setStatusFilter(status.id)}
                 className={cn(
                   "px-3 py-1.5 rounded-md text-xs font-semibold transition",
-                  statusFilter === f
-                    ? "bg-primary text-white"
+                  statusFilter === status.id
+                    ? "text-white"
                     : "text-text-muted hover:bg-gray-100",
                 )}
+                style={
+                  statusFilter === status.id
+                    ? { backgroundColor: status.color }
+                    : {}
+                }
               >
-                {f}
+                {status.name}
               </button>
             ))}
           </div>
         </div>
 
-        <div className="bg-white border border-border rounded-xl overflow-hidden">
+        <div className="bg-white border border-border rounded-xl overflow-visible">
           <table className="w-full hidden md:table">
             <thead>
               <tr className="border-b border-border bg-gray-50">
@@ -140,10 +165,18 @@ const LeadsPage = () => {
                       {lead.city || "—"}
                     </td>
                     <td className="px-6 py-4 text-sm text-text-muted">
-                      {lead.interestType || "—"}
+                      {lead.type === "COMPRA" ? "Compra" : "Aluguel"}
                     </td>
                     <td className="px-6 py-4">
-                      <LeadBadge status={lead.status} />
+                      <span
+                        className="text-xs font-semibold px-2.5 py-1 rounded-full"
+                        style={{
+                          backgroundColor: `${getStatusColor(lead.statusId)}20`,
+                          color: getStatusColor(lead.statusId),
+                        }}
+                      >
+                        {getStatusName(lead.statusId)}
+                      </span>
                     </td>
                     <td className="px-6 py-4 text-right">
                       <LeadActionsMenu
@@ -179,7 +212,15 @@ const LeadsPage = () => {
                       {lead.city || "—"}
                     </p>
                   </div>
-                  <LeadBadge status={lead.status} />
+                  <span
+                    className="text-xs font-semibold px-2.5 py-1 rounded-full"
+                    style={{
+                      backgroundColor: `${getStatusColor(lead.statusId)}20`,
+                      color: getStatusColor(lead.statusId),
+                    }}
+                  >
+                    {getStatusName(lead.statusId)}
+                  </span>
                   <LeadActionsMenu
                     leadId={lead.id}
                     onView={() => handleView(lead)}
@@ -199,6 +240,15 @@ const LeadsPage = () => {
           setSelectedLead(undefined);
         }}
         lead={selectedLead}
+      />
+
+      <LeadViewModal
+        open={viewModalOpen}
+        onClose={() => {
+          setViewModalOpen(false);
+          setViewLead(undefined);
+        }}
+        lead={viewLead}
       />
     </>
   );
