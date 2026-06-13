@@ -1,18 +1,21 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { getKanban, moveLead } from '../api'
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { getKanban, moveLead } from "../api";
 
 export const useKanban = () => {
   return useQuery({
-    queryKey: ['kanban'],
+    queryKey: ["kanban"],
     queryFn: getKanban,
-  })
-}
+  });
+};
 
 export const useMoveLead = () => {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ leadId, statusId }: { leadId: string; statusId: string }) =>
       moveLead(leadId, statusId),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['kanban'] }),
-  })
-}
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["kanban"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard"] });
+    },
+  });
+};

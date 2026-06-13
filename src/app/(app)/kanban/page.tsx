@@ -54,7 +54,7 @@ const KanbanPage = () => {
         <div className="flex gap-4 overflow-x-auto pb-4">
           {columns?.map((column) => (
             <KanbanColumn
-              key={column.status.id}
+              key={column.id}
               column={column}
               onDragStart={handleDragStart}
               onDragOver={handleDragOver}
