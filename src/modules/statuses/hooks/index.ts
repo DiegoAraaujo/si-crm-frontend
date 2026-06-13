@@ -12,7 +12,10 @@ export const useCreateStatus = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: createStatus,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["statuses"] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["statuses"] });
+      queryClient.invalidateQueries({ queryKey: ["kanban"] });
+    },
   });
 };
 
@@ -26,7 +29,10 @@ export const useUpdateStatus = () => {
       id: string;
       payload: { name?: string; color?: string };
     }) => updateStatus(id, payload),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["statuses"] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["statuses"] });
+      queryClient.invalidateQueries({ queryKey: ["kanban"] });
+    },
   });
 };
 
@@ -34,6 +40,9 @@ export const useDeleteStatus = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: deleteStatus,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["statuses"] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["statuses"] });
+      queryClient.invalidateQueries({ queryKey: ["kanban"] });
+    },
   });
 };

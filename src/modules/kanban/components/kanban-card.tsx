@@ -1,7 +1,6 @@
 "use client";
 
-import { Calendar, MessageSquare, Phone } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Calendar, MessageSquare } from "lucide-react";
 import type { Lead } from "@/modules/leads/api";
 
 interface KanbanCardProps {
@@ -9,31 +8,14 @@ interface KanbanCardProps {
   onDragStart: (e: React.DragEvent, leadId: string) => void;
 }
 
-const priorityColors: Record<string, string> = {
-  hot: "text-hot bg-hot/10",
-  warm: "text-warm bg-warm/10",
-  cold: "text-cold bg-cold/10",
-};
-
 export const KanbanCard = ({ lead, onDragStart }: KanbanCardProps) => {
   return (
     <div
       draggable
       onDragStart={(e) => onDragStart(e, lead.id)}
+      onDragOver={(e) => e.preventDefault()}
       className="bg-white border border-border rounded-xl p-4 flex flex-col gap-3 cursor-grab active:cursor-grabbing shadow-sm hover:shadow-md transition-shadow"
     >
-      {lead.status && (
-        <span
-          className={cn(
-            "text-xs font-semibold uppercase w-fit px-2 py-0.5 rounded-full",
-            priorityColors[lead.status?.toLowerCase()] ??
-              "text-text-muted bg-gray-100",
-          )}
-        >
-          {lead.status}
-        </span>
-      )}
-
       <div className="flex flex-col gap-0.5">
         <p className="text-sm font-semibold text-text-base">{lead.name}</p>
         {lead.propertyType && (
