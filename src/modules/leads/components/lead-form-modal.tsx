@@ -22,6 +22,7 @@ export const LeadFormModal = ({ open, onClose, lead }: LeadFormModalProps) => {
   const { mutate: createLead, isPending: isCreating } = useCreateLead();
   const { mutate: updateLead, isPending: isUpdating } = useUpdateLead();
 
+  // Informamos o LeadSchema ao useForm para que o TypeScript saiba exatamente o tipo de cada erro
   const {
     register,
     handleSubmit,
@@ -33,18 +34,49 @@ export const LeadFormModal = ({ open, onClose, lead }: LeadFormModalProps) => {
 
   useEffect(() => {
     if (lead) {
-      reset(lead as any);
+      // Fazemos o map das propriedades que vêm da API para o formato esperado pelo formulário
+      reset({
+        name: lead.name,
+        email: lead.email || "",
+        phone: lead.phone || "",
+        type: lead.type as "COMPRA" | "ALUGUEL",
+        propertyType: lead.propertyType as any,
+        city: lead.city || "",
+        neighborhood: lead.neighborhood || "",
+        budgetMin: lead.budgetMin?.toString() || "",
+        budgetMax: lead.budgetMax?.toString() || "",
+        origin: lead.origin as any,
+        notes: lead.notes || "",
+      });
     } else {
-      reset();
+      reset({
+        name: "",
+        email: "",
+        phone: "",
+        city: "",
+        neighborhood: "",
+        budgetMin: "",
+        budgetMax: "",
+        notes: "",
+      });
     }
   }, [lead, reset]);
 
   const onSubmit = (data: LeadSchema) => {
     const payload = {
-      ...data,
-      budgetMin: Number(data.budgetMin),
-      budgetMax: Number(data.budgetMax),
+      name: data.name,
+      email: data.email || undefined,
+      phone: data.phone || undefined,
+      type: data.type,
+      propertyType: data.propertyType,
+      city: data.city || undefined,
+      neighborhood: data.neighborhood || undefined,
+      budgetMin: data.budgetMin ? Number(data.budgetMin) : undefined,
+      budgetMax: data.budgetMax ? Number(data.budgetMax) : undefined,
+      origin: data.origin,
+      notes: data.notes || undefined,
     };
+
     if (lead) {
       updateLead({ id: lead.id, payload }, { onSuccess: onClose });
     } else {
@@ -95,7 +127,7 @@ export const LeadFormModal = ({ open, onClose, lead }: LeadFormModalProps) => {
                   placeholder="Ricardo Silva"
                   className={cn(inputClass, errors.name && "border-danger")}
                 />
-                {errors.name && (
+                {errors.name?.message && (
                   <span className="text-xs text-danger">
                     {errors.name.message}
                   </span>
@@ -110,7 +142,7 @@ export const LeadFormModal = ({ open, onClose, lead }: LeadFormModalProps) => {
                   placeholder="+55 (11) 99999-9999"
                   className={cn(inputClass, errors.phone && "border-danger")}
                 />
-                {errors.phone && (
+                {errors.phone?.message && (
                   <span className="text-xs text-danger">
                     {errors.phone.message}
                   </span>
@@ -126,7 +158,7 @@ export const LeadFormModal = ({ open, onClose, lead }: LeadFormModalProps) => {
                   placeholder="exemplo@email.com"
                   className={cn(inputClass, errors.email && "border-danger")}
                 />
-                {errors.email && (
+                {errors.email?.message && (
                   <span className="text-xs text-danger">
                     {errors.email.message}
                   </span>
@@ -145,16 +177,18 @@ export const LeadFormModal = ({ open, onClose, lead }: LeadFormModalProps) => {
                   Tipo de Interesse
                 </label>
                 <select
-                  {...register("interestType")}
-                  className={cn(
-                    inputClass,
-                    errors.interestType && "border-danger",
-                  )}
+                  {...register("type")}
+                  className={cn(inputClass, errors.type && "border-danger")}
                 >
                   <option value="">Selecione</option>
-                  <option value="Compra">Compra</option>
-                  <option value="Aluguel">Aluguel</option>
+                  <option value="COMPRA">Compra</option>
+                  <option value="ALUGUEL">Aluguel</option>
                 </select>
+                {errors.type?.message && (
+                  <span className="text-xs text-danger">
+                    {errors.type.message}
+                  </span>
+                )}
               </div>
               <div className="flex flex-col gap-1">
                 <label className="text-xs font-medium text-text-muted">
@@ -168,12 +202,28 @@ export const LeadFormModal = ({ open, onClose, lead }: LeadFormModalProps) => {
                   )}
                 >
                   <option value="">Selecione</option>
-                  <option value="Apartamento">Apartamento</option>
-                  <option value="Casa">Casa</option>
-                  <option value="Cobertura">Cobertura</option>
-                  <option value="Studio">Studio</option>
-                  <option value="Loft">Loft</option>
+                  <option value="APARTAMENTO">Apartamento</option>
+                  <option value="CASA">Casa</option>
+                  <option value="COBERTURA">Cobertura</option>
+                  <option value="STUDIO">Studio</option>
+                  <option value="KITNET">Kitnet</option>
+                  <option value="TERRENO">Terreno</option>
+                  <option value="SALA_COMERCIAL">Sala Comercial</option>
+                  <option value="LOJA">Loja</option>
+                  <option value="GALPAO">Galpão</option>
+                  <option value="CHACARA">Chácara</option>
+                  <option value="FAZENDA">Fazenda</option>
+                  <option value="FLAT">Flat</option>
+                  <option value="LOFT">Loft</option>
+                  <option value="SOBRADO">Sobrado</option>
+                  <option value="CASA_CONDOMINIO">Casa em Condomínio</option>
+                  <option value="PENTHOUSE">Penthouse</option>
                 </select>
+                {errors.propertyType?.message && (
+                  <span className="text-xs text-danger">
+                    {errors.propertyType.message}
+                  </span>
+                )}
               </div>
             </div>
           </div>
@@ -241,34 +291,37 @@ export const LeadFormModal = ({ open, onClose, lead }: LeadFormModalProps) => {
             <h3 className="text-xs font-semibold uppercase tracking-widest text-text-muted">
               CRM
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-1 gap-3">
               <div className="flex flex-col gap-1">
                 <label className="text-xs font-medium text-text-muted">
-                  Status
-                </label>
-                <select
-                  {...register("status")}
-                  className={cn(inputClass, errors.status && "border-danger")}
-                >
-                  <option value="">Selecione</option>
-                  <option value="hot">Hot</option>
-                  <option value="warm">Warm</option>
-                  <option value="cold">Cold</option>
-                </select>
-              </div>
-              <div className="flex flex-col gap-1">
-                <label className="text-xs font-medium text-text-muted">
-                  Origem
+                  Origem do Lead
                 </label>
                 <select
                   {...register("origin")}
                   className={cn(inputClass, errors.origin && "border-danger")}
                 >
                   <option value="">Selecione</option>
-                  <option value="whatsapp">WhatsApp</option>
-                  <option value="site">Site</option>
-                  <option value="indicacao">Indicação</option>
+                  <option value="WHATSAPP">WhatsApp</option>
+                  <option value="SITE">Site</option>
+                  <option value="INDICACAO">Indicação</option>
+                  <option value="INSTAGRAM">Instagram</option>
+                  <option value="FACEBOOK">Facebook</option>
+                  <option value="LINKEDIN">LinkedIn</option>
+                  <option value="GOOGLE">Google</option>
+                  <option value="PORTAL_IMOVEIS">Portal de Imóveis</option>
+                  <option value="EMAIL">E-mail</option>
+                  <option value="TELEFONE">Telefone</option>
+                  <option value="VISITA_PRESENCIAL">Visita Presencial</option>
+                  <option value="EVENTO">Evento</option>
+                  <option value="OUTDOOR">Outdoor</option>
+                  <option value="TV">TV</option>
+                  <option value="RADIO">Rádio</option>
                 </select>
+                {errors.origin?.message && (
+                  <span className="text-xs text-danger">
+                    {errors.origin.message}
+                  </span>
+                )}
               </div>
             </div>
           </div>
