@@ -24,3 +24,7 @@ body {
   background-color: var(--bg);
   color: #111;
 }
+
+.overflow-x-auto::-webkit-scrollbar {
+  display: none;
+}
