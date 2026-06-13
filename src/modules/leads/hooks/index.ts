@@ -24,7 +24,10 @@ export const useCreateLead = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: createLead,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["leads"] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["leads"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard"] });
+    },
   });
 };
 
@@ -41,6 +44,9 @@ export const useDeleteLead = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: deleteLead,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["leads"] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["leads"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard"] });
+    },
   });
 };
