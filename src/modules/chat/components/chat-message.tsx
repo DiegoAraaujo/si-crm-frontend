@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import { Bot } from "lucide-react";
+import ReactMarkdown from "react-markdown";
 import type { Message } from "../api";
 
 interface ChatMessageProps {
@@ -36,7 +37,38 @@ export const ChatMessage = ({ message, userName }: ChatMessageProps) => {
               : "bg-white border border-border text-text-base rounded-tl-sm",
           )}
         >
-          {message.content}
+          {isUser ? (
+            message.content
+          ) : (
+            <ReactMarkdown
+              components={{
+                p: ({ children }) => (
+                  <p className="mb-2 last:mb-0">{children}</p>
+                ),
+                strong: ({ children }) => (
+                  <strong className="font-semibold">{children}</strong>
+                ),
+                ul: ({ children }) => (
+                  <ul className="list-disc pl-4 mb-2 flex flex-col gap-1">
+                    {children}
+                  </ul>
+                ),
+                ol: ({ children }) => (
+                  <ol className="list-decimal pl-4 mb-2 flex flex-col gap-1">
+                    {children}
+                  </ol>
+                ),
+                li: ({ children }) => <li className="text-sm">{children}</li>,
+                code: ({ children }) => (
+                  <code className="bg-gray-100 text-primary px-1 py-0.5 rounded text-xs font-mono">
+                    {children}
+                  </code>
+                ),
+              }}
+            >
+              {message.content}
+            </ReactMarkdown>
+          )}
         </div>
 
         <span className="text-xs text-text-muted">
