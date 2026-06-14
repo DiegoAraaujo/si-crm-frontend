@@ -15,7 +15,7 @@ import { useLogout } from "@/modules/auth/hooks";
 import { useAuthStore } from "@/store/auth.store";
 
 const navItems = [
-  { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { label: "Painel", href: "/dashboard", icon: LayoutDashboard },
   { label: "Kanban", href: "/kanban", icon: Kanban },
   { label: "Leads", href: "/leads", icon: Users },
   { label: "IA Chat", href: "/chat", icon: Bot },
@@ -34,7 +34,7 @@ export const Sidebar = () => {
             SI CRM
           </h1>
           <p className="text-text-muted text-xs uppercase tracking-widest mt-0.5">
-            Elite Reality Group
+            Grupo Elite Imobiliário
           </p>
         </div>
 

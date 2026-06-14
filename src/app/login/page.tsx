@@ -41,17 +41,6 @@ const LoginPage = () => {
             </p>
           </div>
           <LoginForm />
-          <div className="flex justify-center gap-6 text-xs text-text-muted">
-            <span className="cursor-pointer hover:text-text-base transition">
-              Política de Privacidade
-            </span>
-            <span className="cursor-pointer hover:text-text-base transition">
-              Termos de Serviço
-            </span>
-            <span className="cursor-pointer hover:text-text-base transition">
-              Suporte
-            </span>
-          </div>
         </div>
       </div>
     </main>

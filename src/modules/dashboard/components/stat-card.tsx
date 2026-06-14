@@ -26,7 +26,7 @@ export const StatCard = ({
         {label}
       </span>
       <div className="flex items-end gap-3">
-        <span className="text-3xl font-bold text-text-base">{value}</span>
+        <span className="text-2xl font-bold text-text-base">{value}</span>
         {badge && (
           <span
             className={cn(

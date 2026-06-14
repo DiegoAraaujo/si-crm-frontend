@@ -38,9 +38,7 @@ const RegisterPage = () => {
             </p>
           </div>
           <RegisterForm />
-          <p className="text-center text-xs text-text-muted">
-            © 2024 SI CRM — PROFESSIONAL PROPERTY MANAGEMENT
-          </p>
+        
         </div>
       </div>
     </main>
