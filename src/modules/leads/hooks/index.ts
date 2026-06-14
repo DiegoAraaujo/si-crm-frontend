@@ -27,6 +27,7 @@ export const useCreateLead = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["leads"] });
       queryClient.invalidateQueries({ queryKey: ["dashboard"] });
+      queryClient.invalidateQueries({ queryKey: ["kanban"] });
     },
   });
 };
@@ -47,6 +48,7 @@ export const useDeleteLead = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["leads"] });
       queryClient.invalidateQueries({ queryKey: ["dashboard"] });
+      queryClient.invalidateQueries({ queryKey: ["kanban"] });
     },
   });
 };
